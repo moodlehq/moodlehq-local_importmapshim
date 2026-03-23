@@ -33,7 +33,7 @@ From your Moodle root directory, clone the plugin into the `public/local/` subdi
 
 ```bash
 cd /path/to/moodle
-git clone https://github.com/meirza/moodle-local_importmapshim public/local/importmapshim
+git clone https://github.com/moodlehq/moodle-local_importmapshim public/local/importmapshim
 ```
 
 Then visit **Site administration > Notifications** to complete the installation.
