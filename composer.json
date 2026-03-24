@@ -1,0 +1,21 @@
+{
+    "name": "moodlehq/moodle-local_importmapshim",
+    "description": "A Moodle local plugin that injects the es-module-shims polyfill to enable import map support on browsers that lack native support.",
+    "keywords": [
+        "moodle",
+        "local-plugin",
+        "importmap",
+        "es-module-shims",
+        "polyfill",
+        "esm"
+    ],
+    "type": "moodle-local",
+    "require": {
+        "php": ">=8.1",
+        "moodle/moodle": "^5.2",
+        "moodle/composer-installer": "*"
+    },
+    "license": "GPL-3.0-or-later",
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

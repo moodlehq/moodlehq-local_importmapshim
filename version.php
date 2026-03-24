@@ -27,5 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'local_importmapshim';
 $plugin->version   = 2026032000;
 $plugin->requires  = 2026032000;
-$plugin->maturity  = MATURITY_BETA;
+$plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '1.0.0';
