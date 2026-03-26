@@ -34,7 +34,7 @@ import {
 } from '../../../../scripts/lib/util.mjs';
 
 const pluginDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const jsDir = path.join(pluginDir, 'js');
+const jsDir = path.join(pluginDir, 'js', 'shims');
 const filePath = path.join(jsDir, 'es-module-shims.js');
 
 const version = process.argv[2];

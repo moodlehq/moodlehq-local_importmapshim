@@ -17,9 +17,9 @@
 /**
  * Hook callbacks for local_importmapshim.
  *
- * @package    local_importmapshim
- * @copyright  Meirza <meirza.arson@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_importmapshim
+ * @copyright Meirza <meirza.arson@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $callbacks = [
     [
         'hook'     => \core\hook\output\before_standard_top_of_body_html_generation::class,
-        'callback' => \local_importmapshim\hook_listener::class . '::inject_esm_shims',
+        'callback' => [\local_importmapshim\hook_listener::class, 'inject_esm_shims'],
         'priority' => 1000,
     ],
 ];

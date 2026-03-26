@@ -16,19 +16,16 @@
 
 namespace local_importmapshim\privacy;
 
-use core_privacy\local\metadata\null_provider;
-
 /**
  * Privacy provider implementation for importmapshim plugin.
  *
  * This plugin does not store any personal data.
  *
- * @package    local_importmapshim
- * @copyright  Meirza <meirza.arson@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_importmapshim
+ * @copyright Meirza <meirza.arson@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements null_provider {
-
+class provider implements \core_privacy\local\metadata\null_provider {
     /**
      * Get the reason why no personal data is stored.
      *
@@ -37,5 +34,4 @@ class provider implements null_provider {
     public static function get_reason(): string {
         return 'privacy_metadata';
     }
-
 }
