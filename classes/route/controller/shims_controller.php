@@ -23,12 +23,23 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Controller for serving the es-module-shims polyfill.
  *
- * @package    local_importmapshim
- * @copyright  Meirza <meirza.arson@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_importmapshim
+ * @copyright Meirza <meirza.arson@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class shims_controller {
     use \core\router\route_controller;
+
+    /**
+     * Constructor for the shims controller.
+     *
+     * @param \core\clock $clock The clock instance for managing time-related operations.
+     */
+    public function __construct(
+        /** @var \core\clock The clock instance for managing time-related operations. */
+        private \core\clock $clock,
+    ) {
+    }
 
     #[\core\router\route(
         title: 'Serve ES Module Shims',
@@ -55,13 +66,12 @@ class shims_controller {
         ResponseInterface $response,
         int $revision,
     ): ResponseInterface {
-        global $CFG;
-
         if (!min_is_revision_valid_and_current($revision)) {
             $revision = -1;
         }
 
-        $fullpath = "{$CFG->dirroot}/local/importmapshim/js/es-module-shims.js";
+        $jsroot = dirname(__DIR__, 3) . '/js/shims';
+        $fullpath = "{$jsroot}/es-module-shims.js";
         if (file_exists($fullpath)) {
             return $this->serve_script($request, $response, $revision, $fullpath, basename($fullpath));
         }
@@ -88,35 +98,48 @@ class shims_controller {
         string $file,
         string $presentedfilename,
     ): ResponseInterface {
-        $now = \core\di::get(\core\clock::class)->time();
+        $now = $this->clock->now();
+
+        $etag = null;
 
         if ($revision === -1) {
-            $response = $response
-                ->withHeader('Content-Type', 'application/javascript; charset=utf-8')
-                ->withHeader('Content-Disposition', "inline; filename=\"{$presentedfilename}\"")
-                ->withHeader('Last-Modified', gmdate('D, d M Y H:i:s', $now) . ' GMT')
-                ->withHeader('Expires', gmdate('D, d M Y H:i:s', $now + 2) . ' GMT')
-                ->withHeader('Pragma', '')
-                ->withHeader('Accept-Ranges', 'none');
+            $modified = $now;
+            // 2 seconds in the future to prevent immediate expiration.
+            $expiry = $now->add(new \DateInterval('PT2S'));
+            $headerfilename = $presentedfilename;
         } else {
+            $headerfilename = basename($file);
             $etag = sha1($revision . ':' . $file);
+            // 1 year in the future since we use immutable caching.
+            $expiry = $now->add(new \DateInterval('P1Y'));
+            $modified = $now->setTimestamp(filemtime($file));
+            $maxage = $expiry->getTimestamp() - $now->getTimestamp();
 
+            $response = $response
+                ->withHeader('ETag', $etag)
+                ->withHeader('Cache-Control', "public, max-age={$maxage}, immutable");
+        }
+
+        $response = $response
+            ->withHeader('Content-Disposition', "inline; filename=\"{$headerfilename}\"")
+            ->withHeader('Content-Type', 'application/javascript; charset=utf-8')
+            ->withHeader('Pragma', '')
+            ->withHeader('Accept-Ranges', 'none')
+            ->withHeader(
+                'Last-Modified',
+                $modified->format(\DateTimeInterface::RFC7231)
+            )
+            ->withHeader(
+                'Expires',
+                $expiry->format(\DateTimeInterface::RFC7231)
+            );
+
+        if ($etag) {
             if ($request->hasHeader('If-None-Match') && in_array($etag, $request->getHeader('If-None-Match'))) {
                 return $response->withStatus(304);
             }
-
-            $response = $response
-                ->withHeader('Content-Type', 'application/javascript; charset=utf-8')
-                ->withHeader('ETag', $etag)
-                ->withHeader('Content-Disposition', 'inline; filename="' . basename($file) . '"')
-                ->withHeader('Last-Modified', gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT')
-                ->withHeader('Expires', gmdate('D, d M Y H:i:s', $now + 31536000) . ' GMT')
-                ->withHeader('Pragma', '')
-                ->withHeader('Cache-Control', 'public, max-age=31536000, immutable')
-                ->withHeader('Accept-Ranges', 'none');
         }
 
-        $response->getBody()->write(file_get_contents($file));
-        return $response;
+        return $response->withBody(\GuzzleHttp\Psr7\Utils::streamFor(\GuzzleHttp\Psr7\Utils::tryFopen($file, 'r')));
     }
 }

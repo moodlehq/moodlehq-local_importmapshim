@@ -19,9 +19,9 @@ namespace local_importmapshim;
 /**
  * Hook listener for local_importmapshim.
  *
- * @package    local_importmapshim
- * @copyright  Meirza <meirza.arson@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_importmapshim
+ * @copyright Meirza <meirza.arson@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class hook_listener {
     /**
@@ -42,7 +42,7 @@ class hook_listener {
         );
 
         $hook->add_html(
-            \html_writer::tag(
+            \core\output\html_writer::tag(
                 tagname: 'script',
                 contents: '',
                 attributes: ['src' => $path->out()],

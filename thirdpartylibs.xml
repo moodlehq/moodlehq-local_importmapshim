@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <libraries>
   <library>
-    <location>js</location>
+    <location>js/shims</location>
     <name>esm-shims</name>
     <description>Polyfills import maps and other ES Modules features on top of the baseline native ESM support in browsers.</description>
     <version>2.7.0</version>

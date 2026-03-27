@@ -17,9 +17,9 @@
 /**
  * Language strings for local_importmapshim.
  *
- * @package    local_importmapshim
- * @copyright  Meirza <meirza.arson@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_importmapshim
+ * @copyright Meirza <meirza.arson@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
