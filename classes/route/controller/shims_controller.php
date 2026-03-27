@@ -134,7 +134,6 @@ class shims_controller {
                 $expiry->format(\DateTimeInterface::RFC7231)
             );
 
-
         if ($etag) {
             if ($request->hasHeader('If-None-Match') && in_array($etag, $request->getHeader('If-None-Match'))) {
                 return $response->withStatus(304);
